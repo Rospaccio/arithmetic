@@ -20,6 +20,8 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.junit.Test;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
+import org.merka.arithmetic.language.visitor.NaiveInterpreterVisitor;
+import org.merka.arithmetic.language.visitor.ParseTreeDumperVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +31,7 @@ public class TestArithmeticParser {
 	
 	public static final String[] validStrings = 
 		{
-			"1",
+			"1.2",
 			"1+1",
 			"1+1+2*3+4/6",
 			"1 + 1",
@@ -38,7 +40,31 @@ public class TestArithmeticParser {
 			"1 + 3 * 4",
 			"3 /4+1",
 			"3 * (1 + 4 + 5 * 3)",
+			"1 + (30 - (5 - (2 + (4 - 5))))",
+			"((2))",
+			"((((4))))",
+			"(1) - (2)",
+			"(1 + 1)",
 			"(2) + (3 - 5) * (3-2)"
+		};
+	
+	public static final String[] invalidStrings = 
+		{
+			"1.",
+			"1+1-",
+			"1+1+2*3+4//6",
+			"1 ++ 1",
+			"1 +* 1 + 1",
+			"3 * 4.4.4",
+			"1 + 3 * 4.4.",
+			"3 /)(4+1",
+			"3 * ((1 + 4 + 5 * 3)",
+			"1 + (30 -+ (5 - (2 + (4 - 5))))",
+			"((2)))",
+			"((((4)))))",
+			"(1) - (2))",
+			"(1 + 1()",
+			"(2) + ()3 - 5) * (3-2)"
 		};
 	
 	@Test
@@ -47,7 +73,38 @@ public class TestArithmeticParser {
 			assertTrue("string = '" + valid + "'", isValidLanguageString(valid));
 		}
 	}
+	
+	@Test
+	public void testInvalidStrings() throws IOException{
+		for(String invalid : invalidStrings){
+			assertFalse("string '" + invalid + "' is recognized as valid, but it should not", isValidLanguageString(invalid));
+		}
+	}
+	
+	@Test
+	public void testParseTreeToString() throws IOException{
+//		String program = "1 + (30 / (3 * 4.4) + (5.34 * 0.3 - (0.2 + (4 - 5))))";
+		String program = "1 + 3 - 2";
+		ArithmeticTestErrorListener errorListener = new ArithmeticTestErrorListener();
+		ProgramContext context = parseProgram(program, errorListener); 
+		assertFalse(errorListener.isFail());
+		ArithmeticVisitor<String> dumper = new ParseTreeDumperVisitor();
+		String parseTreeString = dumper.visit(context);
+		logger.info(parseTreeString);
+	}
 
+	@Test
+	public void testNaiveInterpreterVisitor() throws IOException{
+		String program = "2 + 3 * 4"; //14
+		NaiveInterpreterVisitor visitor = new NaiveInterpreterVisitor();
+		ArithmeticTestErrorListener errorListener = new ArithmeticTestErrorListener();
+		ProgramContext context = parseProgram(program, errorListener);
+		assertFalse(errorListener.isFail());
+		Double result = visitor.visit(context);
+		Double epsilon = Double.valueOf("0.00001");
+		assertTrue(Math.abs(result - (double)14) <= epsilon);
+	}
+	
 	private boolean isValidLanguageString(String languageString) throws IOException{
 		ArithmeticTestErrorListener errorListener = new ArithmeticTestErrorListener();
 		ProgramContext context = parseProgram(languageString, errorListener);

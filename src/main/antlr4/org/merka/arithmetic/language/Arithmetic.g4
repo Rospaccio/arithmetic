@@ -2,24 +2,22 @@ grammar Arithmetic;
 
 program : expression ;
 
-expression : additiveExp;
+expression 
+	: additiveExp;
 	
 additiveExp 
-	: multiplicativeExp
-	| additiveExp '+' multiplicativeExp 
-	| additiveExp '-' multiplicativeExp ;
-	
+	: additiveExp '+' additiveExp #Sum
+	| additiveExp '-' additiveExp #Diff
+	| multiplicativeExp #Term;
+
 multiplicativeExp
-	: unaryExp
-	| multiplicativeExp '*' unaryExp
-	| multiplicativeExp '/' unaryExp ;
+	: multiplicativeExp '*' multiplicativeExp #Mult
+	| multiplicativeExp '/' multiplicativeExp #Div
+	| realNumber #Real
+	| '(' expression ')' #Exp;
 
-unaryExp 
-	: realNumber
-	| '(' expression ')' ;
-
-realNumber : NUMBER ('.' NUMBER)? ;
+realNumber : NUMBER ('.'NUMBER)? ;
 
 WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
 
-NUMBER : [0 - 9]+ ;
+NUMBER : [0-9]+ ;
