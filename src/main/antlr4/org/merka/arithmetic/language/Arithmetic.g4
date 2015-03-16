@@ -6,15 +6,15 @@ expression
 	: additiveExp;
 	
 additiveExp 
-	: additiveExp '+' additiveExp #Sum
-	| additiveExp '-' additiveExp #Diff
-	| multiplicativeExp #Term;
+	: additiveExp '+' additiveExp
+	| additiveExp '-' additiveExp
+	| multiplicativeExp;
 
 multiplicativeExp
-	: multiplicativeExp '*' multiplicativeExp #Mult
-	| multiplicativeExp '/' multiplicativeExp #Div
-	| realNumber #Real
-	| '(' expression ')' #Exp;
+	: multiplicativeExp '*' multiplicativeExp
+	| multiplicativeExp '/' multiplicativeExp
+	| realNumber
+	| '(' expression ')';
 
 realNumber : NUMBER ('.'NUMBER)? ;
 
