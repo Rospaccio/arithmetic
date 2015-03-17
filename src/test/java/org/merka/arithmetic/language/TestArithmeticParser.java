@@ -1,7 +1,6 @@
 package org.merka.arithmetic.language;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -58,7 +57,13 @@ public class TestArithmeticParser {
 		12D,
 		13D,
 		1.75,
-		60D
+		60D,
+		27D,
+		2D,
+		4D,
+		-1D,
+		2D,
+		0D
 	};
 	
 	public static final String[] invalidStrings = 
@@ -105,6 +110,21 @@ public class TestArithmeticParser {
 		String parseTreeString = dumper.visit(context);
 		logger.info(parseTreeString);
 	}
+	
+	@Test
+	public void testDoubleEvaluation() throws IOException{
+		logger.info("\n\nStarting double evaluation test\n\n");
+		String program = "1 + (30 / (3 * 4.4) + (5.34 * 0.3 - (0.2 + (4 - 5))))";
+		
+		NaiveInterpreterVisitor visitor = new NaiveInterpreterVisitor();
+		ArithmeticTestErrorListener errorListener = new ArithmeticTestErrorListener();
+		ProgramContext context = parseProgram(program, errorListener);
+		assertFalse(errorListener.isFail());
+		Double result = visitor.visit(context);
+		Double secondResult = visitor.visit(context);
+		
+		assertEquals(result, secondResult);
+	}
 
 	@Test
 	public void testNaiveInterpreterVisitor() throws IOException{
@@ -150,9 +170,6 @@ public class TestArithmeticParser {
 		TokenStream inputTokenStream = new CommonTokenStream(tokenSource);
 		ArithmeticParser parser = new ArithmeticParser(inputTokenStream);
 		parser.addErrorListener(errorListener);
-	
-		parser.addParseListener(new ASTBuilderListener());
-		
 		ProgramContext context = parser.program();
 		return context;
 	}

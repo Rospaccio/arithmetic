@@ -15,9 +15,13 @@ import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
 import org.merka.arithmetic.language.ArithmeticParser.SumContext;
 import org.merka.arithmetic.language.ArithmeticParser.TermContext;
 import org.merka.arithmetic.language.ArithmeticVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 
+	private static final Logger logger = LoggerFactory.getLogger(NaiveInterpreterVisitor.class);
+	
 	private ParseTreeProperty<Double> numberNodesAnnotations = new ParseTreeProperty<Double>();
 	
 	protected ParseTreeProperty<Double> getNumberNodesAnnotations() {
@@ -85,11 +89,17 @@ public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 
 	@Override
 	public Double visitNumber(NumberContext ctx) {
+		if(numberNodesAnnotations.get(ctx) != null){
+			logger.info("value found in cache");
+			return numberNodesAnnotations.get(ctx);
+		}
 		Double value = Double.valueOf( ctx.NUMBER(0).getText() );
 		if(ctx.getChildCount() == 3){
 			Double decimalPart = Double.valueOf("0." + ctx.NUMBER(1).getText());
 			value += decimalPart;
 		}
+		logger.info("storing value in cache");
+		numberNodesAnnotations.put(ctx, value);
 		return value;
 	}
 
