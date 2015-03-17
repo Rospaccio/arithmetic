@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.merka.arithmetic.language.ArithmeticParser.DifferenceContext;
 import org.merka.arithmetic.language.ArithmeticParser.DivisionContext;
-import org.merka.arithmetic.language.ArithmeticParser.ExpressionContext;
 import org.merka.arithmetic.language.ArithmeticParser.InnerExpressionContext;
 import org.merka.arithmetic.language.ArithmeticParser.MultiplicationContext;
 import org.merka.arithmetic.language.ArithmeticParser.NumberContext;
@@ -88,7 +87,7 @@ public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 	public Double visitNumber(NumberContext ctx) {
 		Double value = Double.valueOf( ctx.NUMBER(0).getText() );
 		if(ctx.getChildCount() == 3){
-			Double decimalPart = Double.valueOf(ctx.NUMBER(1).getText());
+			Double decimalPart = Double.valueOf("0." + ctx.NUMBER(1).getText());
 			value += decimalPart;
 		}
 		return value;

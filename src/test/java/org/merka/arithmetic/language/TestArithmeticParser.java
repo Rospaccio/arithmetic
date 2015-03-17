@@ -52,13 +52,13 @@ public class TestArithmeticParser {
 	public static Double[] results = {
 		1.2,
 		2D,
-		0.666666666667,
+		8.666666666667,
 		2D,
 		3D,
 		12D,
 		13D,
 		1.75,
-		22D
+		60D
 	};
 	
 	public static final String[] invalidStrings = 
