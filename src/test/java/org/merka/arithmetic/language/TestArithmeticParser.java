@@ -1,6 +1,7 @@
 package org.merka.arithmetic.language;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -10,7 +11,6 @@ import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
@@ -20,6 +20,7 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.junit.Test;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
+import org.merka.arithmetic.language.listener.ASTBuilderListener;
 import org.merka.arithmetic.language.visitor.NaiveInterpreterVisitor;
 import org.merka.arithmetic.language.visitor.ParseTreeDumperVisitor;
 import org.slf4j.Logger;
@@ -47,6 +48,18 @@ public class TestArithmeticParser {
 			"(1 + 1)",
 			"(2) + (3 - 5) * (3-2)"
 		};
+	
+	public static Double[] results = {
+		1.2,
+		2D,
+		0.666666666667,
+		2D,
+		3D,
+		12D,
+		13D,
+		1.75,
+		22D
+	};
 	
 	public static final String[] invalidStrings = 
 		{
@@ -83,10 +96,10 @@ public class TestArithmeticParser {
 	
 	@Test
 	public void testParseTreeToString() throws IOException{
-//		String program = "1 + (30 / (3 * 4.4) + (5.34 * 0.3 - (0.2 + (4 - 5))))";
-		String program = "1 + 3 - 2";
+		String program = "1 + (30 / (3 * 4.4) + (5.34 * 0.3 - (0.2 + (4 - 5))))";
+//		String program = "1 + 3 - 2";
 		ArithmeticTestErrorListener errorListener = new ArithmeticTestErrorListener();
-		ProgramContext context = parseProgram(program, errorListener); 
+		ProgramContext context = parseProgram(program, errorListener);		
 		assertFalse(errorListener.isFail());
 		ArithmeticVisitor<String> dumper = new ParseTreeDumperVisitor();
 		String parseTreeString = dumper.visit(context);
@@ -96,13 +109,32 @@ public class TestArithmeticParser {
 	@Test
 	public void testNaiveInterpreterVisitor() throws IOException{
 		String program = "2 + 3 * 4"; //14
+		Double result = interpret(program);
+		Double epsilon = Double.valueOf("0.00001");
+		assertTrue(Math.abs(result - (double)14) <= epsilon);
+	}
+	
+	@Test
+	public void testNaiveInterpreterVisitorBatch() throws IOException{
+		int index = 0;
+		for(Double expected : results){
+			String program = validStrings[index];
+			Double result = interpret(program);
+			Double epsilon = Double.valueOf("0.00001");
+			assertTrue("Result does not match for the program '" 
+					+ program + "'. Expected " + expected 
+					+ " but got " + result, Math.abs(result - (double)expected) <= epsilon);
+			index++;
+		}
+	}
+	
+	private Double interpret(String program) throws IOException{
 		NaiveInterpreterVisitor visitor = new NaiveInterpreterVisitor();
 		ArithmeticTestErrorListener errorListener = new ArithmeticTestErrorListener();
 		ProgramContext context = parseProgram(program, errorListener);
 		assertFalse(errorListener.isFail());
 		Double result = visitor.visit(context);
-		Double epsilon = Double.valueOf("0.00001");
-		assertTrue(Math.abs(result - (double)14) <= epsilon);
+		return result;
 	}
 	
 	private boolean isValidLanguageString(String languageString) throws IOException{
@@ -118,6 +150,8 @@ public class TestArithmeticParser {
 		TokenStream inputTokenStream = new CommonTokenStream(tokenSource);
 		ArithmeticParser parser = new ArithmeticParser(inputTokenStream);
 		parser.addErrorListener(errorListener);
+	
+		parser.addParseListener(new ASTBuilderListener());
 		
 		ProgramContext context = parser.program();
 		return context;

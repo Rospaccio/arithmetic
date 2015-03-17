@@ -3,20 +3,17 @@ grammar Arithmetic;
 program : expression ;
 
 expression 
-	: additiveExp;
-	
-additiveExp 
-	: additiveExp '+' additiveExp
-	| additiveExp '-' additiveExp
-	| multiplicativeExp;
+	: expression '+' expression #Sum 
+	| expression '-' expression #Difference
+	| multiplicativeExp #Term;
 
 multiplicativeExp
-	: multiplicativeExp '*' multiplicativeExp
-	| multiplicativeExp '/' multiplicativeExp
-	| realNumber
-	| '(' expression ')';
+	: multiplicativeExp '*' multiplicativeExp #Multiplication
+	| multiplicativeExp '/' multiplicativeExp #Division
+	| NUMBER ('.'NUMBER)? #Number
+	| '(' expression ')' #InnerExpression;
 
-realNumber : NUMBER ('.'NUMBER)? ;
+// realNumber : NUMBER ('.'NUMBER)?;
 
 WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
 

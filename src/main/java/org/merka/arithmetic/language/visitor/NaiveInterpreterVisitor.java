@@ -2,24 +2,42 @@ package org.merka.arithmetic.language.visitor;
 
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.merka.arithmetic.language.ArithmeticParser.AdditiveExpContext;
+import org.merka.arithmetic.language.ArithmeticParser.DifferenceContext;
+import org.merka.arithmetic.language.ArithmeticParser.DivisionContext;
 import org.merka.arithmetic.language.ArithmeticParser.ExpressionContext;
-import org.merka.arithmetic.language.ArithmeticParser.MultiplicativeExpContext;
+import org.merka.arithmetic.language.ArithmeticParser.InnerExpressionContext;
+import org.merka.arithmetic.language.ArithmeticParser.MultiplicationContext;
+import org.merka.arithmetic.language.ArithmeticParser.NumberContext;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
-import org.merka.arithmetic.language.ArithmeticParser.RealNumberContext;
+//import org.merka.arithmetic.language.ArithmeticParser.RealNumberContext;
+import org.merka.arithmetic.language.ArithmeticParser.SumContext;
+import org.merka.arithmetic.language.ArithmeticParser.TermContext;
 import org.merka.arithmetic.language.ArithmeticVisitor;
 
 public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 
+	private ParseTreeProperty<Double> numberNodesAnnotations = new ParseTreeProperty<Double>();
+	
+	protected ParseTreeProperty<Double> getNumberNodesAnnotations() {
+		return numberNodesAnnotations;
+	}
+
+	protected void setNumberNodesAnnotations(
+			ParseTreeProperty<Double> numberNodesAnnotations) {
+		this.numberNodesAnnotations = numberNodesAnnotations;
+	}
+
 	@Override
 	public Double visit(ParseTree arg0) {
-		return Double.valueOf(14F);
+		return arg0.accept(this);
 	}
 
 	@Override
 	public Double visitChildren(RuleNode arg0) {
+		
 		return null;
 	}
 
@@ -37,38 +55,61 @@ public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 
 	@Override
 	public Double visitProgram(ProgramContext ctx) {
-		
-		return null;
+		return ctx.expression().accept(this);
 	}
 
 	@Override
-	public Double visitExpression(ExpressionContext ctx) {
-		
-		return null;
-	}
-
-	@Override
-	public Double visitAdditiveExp(AdditiveExpContext ctx) {
-		
-		return null;
-	}
-
-	@Override
-	public Double visitMultiplicativeExp(MultiplicativeExpContext ctx) {
-		Double leftOperand = ctx.getChild(0).accept(this);
-		String operator = ctx.getChild(1).getText();
+	public Double visitSum(SumContext ctx) {
+		Double leftOpernad = ctx.getChild(0).accept(this);
 		Double rightOperand = ctx.getChild(2).accept(this);
-		return leftOperand * rightOperand;
+		return leftOpernad + rightOperand;
 	}
 
 	@Override
-	public Double visitRealNumber(RealNumberContext ctx) {
-		Double value = Double.valueOf(ctx.getChild(0).getText());
+	public Double visitTerm(TermContext ctx) {
+		return ctx.getChild(0).accept(this);
+	}
+
+	@Override
+	public Double visitDifference(DifferenceContext ctx) {
+		Double leftOpernad = ctx.getChild(0).accept(this);
+		Double rightOperand = ctx.getChild(2).accept(this);
+		return leftOpernad - rightOperand;
+	}
+
+	@Override
+	public Double visitMultiplication(MultiplicationContext ctx) {
+		Double leftOpernad = ctx.getChild(0).accept(this);
+		Double rightOperand = ctx.getChild(2).accept(this);
+		return leftOpernad * rightOperand;
+	}
+
+	@Override
+	public Double visitNumber(NumberContext ctx) {
+		Double value = Double.valueOf( ctx.NUMBER(0).getText() );
 		if(ctx.getChildCount() == 3){
-			Double decimalPart = Double.parseDouble("0." + ctx.getChild(2).getText());
-			value = value + decimalPart; 
+			Double decimalPart = Double.valueOf(ctx.NUMBER(1).getText());
+			value += decimalPart;
 		}
 		return value;
 	}
+
+	@Override
+	public Double visitInnerExpression(InnerExpressionContext ctx) {
+		return ctx.expression().accept(this);
+	}
+
+	@Override
+	public Double visitDivision(DivisionContext ctx) {
+		Double leftOpernad = ctx.getChild(0).accept(this);
+		Double rightOperand = ctx.getChild(2).accept(this);
+		return leftOpernad / rightOperand;
+	}
+
+//	@Override
+//	public Double visitRealNumber(RealNumberContext ctx) {
+//		
+//		return null;
+//	}
 
 }

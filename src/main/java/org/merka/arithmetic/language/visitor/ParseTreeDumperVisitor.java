@@ -1,14 +1,19 @@
 package org.merka.arithmetic.language.visitor;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.merka.arithmetic.language.ArithmeticParser.AdditiveExpContext;
+import org.merka.arithmetic.language.ArithmeticParser.DifferenceContext;
+import org.merka.arithmetic.language.ArithmeticParser.DivisionContext;
 import org.merka.arithmetic.language.ArithmeticParser.ExpressionContext;
-import org.merka.arithmetic.language.ArithmeticParser.MultiplicativeExpContext;
+import org.merka.arithmetic.language.ArithmeticParser.InnerExpressionContext;
+import org.merka.arithmetic.language.ArithmeticParser.MultiplicationContext;
+import org.merka.arithmetic.language.ArithmeticParser.NumberContext;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
-import org.merka.arithmetic.language.ArithmeticParser.RealNumberContext;
+import org.merka.arithmetic.language.ArithmeticParser.SumContext;
+import org.merka.arithmetic.language.ArithmeticParser.TermContext;
 import org.merka.arithmetic.language.ArithmeticVisitor;
 
 public class ParseTreeDumperVisitor implements ArithmeticVisitor<String> {
@@ -54,27 +59,47 @@ public class ParseTreeDumperVisitor implements ArithmeticVisitor<String> {
 
 	@Override
 	public String visitProgram(ProgramContext ctx) {
-		return getIndentation() + "<program>" + visitChildren(ctx);
+		return getNodeStringRepresentation("<program>", ctx);
 	}
 
 	@Override
-	public String visitExpression(ExpressionContext ctx) {
-		return getIndentation() + "<expression>" + visitChildren(ctx);
+	public String visitSum(SumContext ctx) {
+		return getNodeStringRepresentation("<sum>", ctx);
+	}
+	
+	@Override
+	public String visitDifference(DifferenceContext ctx) {
+		return getNodeStringRepresentation("<difference>", ctx);
 	}
 
 	@Override
-	public String visitAdditiveExp(AdditiveExpContext ctx) {
-		return getIndentation() + "<additiveExp>" + visitChildren(ctx);
+	public String visitMultiplication(MultiplicationContext ctx) {
+		return getNodeStringRepresentation("<multiplication>", ctx);
 	}
-
+	
 	@Override
-	public String visitMultiplicativeExp(MultiplicativeExpContext ctx) {
-		return getIndentation() + "<multiplicativeExp>" + visitChildren(ctx);
+	public String visitDivision(DivisionContext ctx) {
+		return getNodeStringRepresentation("<division>", ctx);
 	}
-
+	
+//	@Override
+//	public String visitRealNumber(RealNumberContext ctx) {
+//		return getNodeStringRepresentation("<realNumber>", ctx);
+//	}
+	
 	@Override
-	public String visitRealNumber(RealNumberContext ctx) {
-		return getIndentation() + "<realNumber>" + visitChildren(ctx);
+	public String visitNumber(NumberContext ctx) {
+		return getNodeStringRepresentation("<number>", ctx);
+	}
+	
+	@Override
+	public String visitTerm(TermContext ctx) {
+		return getNodeStringRepresentation("<term>", ctx);
+	}
+	
+	@Override
+	public String visitInnerExpression(InnerExpressionContext ctx) {
+		return getNodeStringRepresentation("<innerExpression>", ctx);
 	}
 
 	private String getIndentation(){
@@ -83,5 +108,9 @@ public class ParseTreeDumperVisitor implements ArithmeticVisitor<String> {
 			builder.append("--");
 		}
 		return builder.toString();
+	}
+	
+	private String getNodeStringRepresentation(String nodeName, ParserRuleContext context){
+		return getIndentation() + nodeName + visitChildren(context);
 	}
 }
