@@ -2,18 +2,18 @@ package org.merka.arithmetic.language.ast;
 
 public abstract class BinaryExpression extends ArithmeticASTNode {
 
-	public Number leftOperand;
-	public Number rightOperand;
-	protected Number getLeftOperand() {
+	public ArithmeticASTNode leftOperand;
+	public ArithmeticASTNode rightOperand;
+	public ArithmeticASTNode getLeftOperand() {
 		return leftOperand;
 	}
-	protected void setLeftOperand(Number leftOperand) {
+	public void setLeftOperand(ArithmeticASTNode leftOperand) {
 		this.leftOperand = leftOperand;
 	}
-	protected Number getRightOperand() {
+	public ArithmeticASTNode getRightOperand() {
 		return rightOperand;
 	}
-	protected void setRightOperand(Number rightOperand) {
+	public void setRightOperand(ArithmeticASTNode rightOperand) {
 		this.rightOperand = rightOperand;
 	}
 	

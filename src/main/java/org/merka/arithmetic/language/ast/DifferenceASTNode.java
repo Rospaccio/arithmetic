@@ -1,10 +1,16 @@
 package org.merka.arithmetic.language.ast;
 
-public class DifferenceASTNode extends BinaryExpression {
+import org.merka.arithmetic.language.ast.visitor.ArithmeticASTVisitor;
 
-	public DifferenceASTNode(Number leftOpernad, Number rightOperand){
+public class DifferenceASTNode extends BinaryExpression {
+	public DifferenceASTNode(ArithmeticASTNode leftOperand, ArithmeticASTNode rightOperand){
 		super();
-		setLeftOperand(leftOpernad);
+		setLeftOperand(leftOperand);
 		setRightOperand(rightOperand);
+	}
+
+	@Override
+	public Object accept(ArithmeticASTVisitor visitor) {
+		return visitor.visitDifference(this);
 	}
 }

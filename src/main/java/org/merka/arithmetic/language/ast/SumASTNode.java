@@ -1,11 +1,18 @@
 package org.merka.arithmetic.language.ast;
 
+import org.merka.arithmetic.language.ast.visitor.ArithmeticASTVisitor;
+
 public class SumASTNode extends BinaryExpression {
 
-	public SumASTNode(Number leftOpernad, Number rightOperand) {
+	public SumASTNode(ArithmeticASTNode leftOperand, ArithmeticASTNode rightOperand) {
 		super();
 		setLeftOperand(leftOperand);
 		setRightOperand(rightOperand);
+	}
+
+	@Override
+	public Object accept(ArithmeticASTVisitor visitor) {
+		return visitor.visitSum(this);
 	}
 
 	

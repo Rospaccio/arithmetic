@@ -14,6 +14,11 @@ import org.merka.arithmetic.language.ArithmeticParser.SumContext;
 import org.merka.arithmetic.language.ArithmeticParser.TermContext;
 import org.merka.arithmetic.language.ArithmeticVisitor;
 import org.merka.arithmetic.language.ast.ArithmeticASTNode;
+import org.merka.arithmetic.language.ast.DifferenceASTNode;
+import org.merka.arithmetic.language.ast.DivisionASTNode;
+import org.merka.arithmetic.language.ast.MultiplicationASTNode;
+import org.merka.arithmetic.language.ast.NumberASTNode;
+import org.merka.arithmetic.language.ast.SumASTNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,26 +57,28 @@ public class ASTBuilderVisitor implements ArithmeticVisitor<ArithmeticASTNode> {
 
 	@Override
 	public ArithmeticASTNode visitSum(SumContext ctx) {
-		
-		return null;
+		ArithmeticASTNode leftOperand = ctx.expression(0).accept(this);
+		ArithmeticASTNode rightOperand = ctx.expression(1).accept(this);
+		return new SumASTNode(leftOperand, rightOperand);
 	}
 
 	@Override
 	public ArithmeticASTNode visitTerm(TermContext ctx) {
-		
-		return null;
+		return ctx.getChild(0).accept(this);
 	}
 
 	@Override
 	public ArithmeticASTNode visitDifference(DifferenceContext ctx) {
-		
-		return null;
+		ArithmeticASTNode leftOperand = ctx.expression(0).accept(this);
+		ArithmeticASTNode rightOperand = ctx.expression(1).accept(this);
+		return new DifferenceASTNode(leftOperand, rightOperand);
 	}
 
 	@Override
 	public ArithmeticASTNode visitMultiplication(MultiplicationContext ctx) {
-		
-		return null;
+		ArithmeticASTNode leftOperand = ctx.multiplicativeExp(0).accept(this);
+		ArithmeticASTNode rightOperand = ctx.multiplicativeExp(1).accept(this);
+		return new MultiplicationASTNode(leftOperand, rightOperand);
 	}
 
 	public Number extractNumberValue(NumberContext context){
@@ -85,19 +92,19 @@ public class ASTBuilderVisitor implements ArithmeticVisitor<ArithmeticASTNode> {
 	
 	@Override
 	public ArithmeticASTNode visitNumber(NumberContext ctx) {
-		return null;
+		return new NumberASTNode(extractNumberValue(ctx));
 	}
 
 	@Override
 	public ArithmeticASTNode visitInnerExpression(InnerExpressionContext ctx) {
-		
-		return null;
+		return ctx.expression().accept(this);
 	}
 
 	@Override
 	public ArithmeticASTNode visitDivision(DivisionContext ctx) {
-		
-		return null;
+		ArithmeticASTNode leftOperand = ctx.multiplicativeExp(0).accept(this);
+		ArithmeticASTNode rightOperand = ctx.multiplicativeExp(1).accept(this);
+		return new DivisionASTNode(leftOperand, rightOperand);
 	}
 
 }

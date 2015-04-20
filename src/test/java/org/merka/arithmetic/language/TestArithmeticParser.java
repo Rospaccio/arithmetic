@@ -163,7 +163,7 @@ public class TestArithmeticParser {
 		return !errorListener.isFail();
 	}
 	
-	private ProgramContext parseProgram(String program, ANTLRErrorListener errorListener) throws IOException
+	public static ProgramContext parseProgram(String program, ANTLRErrorListener errorListener) throws IOException
 	{
 		CharStream inputCharStream = new ANTLRInputStream(new StringReader(program));
 		TokenSource tokenSource = new ArithmeticLexer(inputCharStream);
@@ -174,7 +174,7 @@ public class TestArithmeticParser {
 		return context;
 	}
 	
-	class ArithmeticTestErrorListener implements ANTLRErrorListener {
+	public static class ArithmeticTestErrorListener implements ANTLRErrorListener {
 		
 		private boolean fail = false;
 		
