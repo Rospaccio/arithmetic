@@ -3,27 +3,22 @@ package org.merka.arithmetic.ast;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.io.StringReader;
 
-import org.antlr.v4.runtime.ANTLRErrorListener;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.TokenSource;
-import org.antlr.v4.runtime.TokenStream;
 import org.junit.Test;
-import org.merka.arithmetic.language.ArithmeticLexer;
-import org.merka.arithmetic.language.ArithmeticParser;
-import org.merka.arithmetic.language.TestArithmeticParser;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
+import org.merka.arithmetic.language.TestArithmeticParser;
 import org.merka.arithmetic.language.TestArithmeticParser.ArithmeticTestErrorListener;
 import org.merka.arithmetic.language.ast.ArithmeticASTNode;
 import org.merka.arithmetic.language.ast.visitor.ArithmeticASTVisitor;
 import org.merka.arithmetic.language.ast.visitor.EvaluationVisitor;
 import org.merka.arithmetic.language.visitor.ASTBuilderVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestEvaluationVisitor {
 
+	private static final Logger logger = LoggerFactory.getLogger(TestEvaluationVisitor.class);
+	
 	public static final double DELTA = 0.00001;
 	
 	public static final String[] validStrings = 
@@ -91,7 +86,7 @@ public class TestEvaluationVisitor {
 		
 		ArithmeticASTVisitor astVisitor = new EvaluationVisitor();
 		Number evaluationResult = (Number)ast.accept(astVisitor);
-		
+		logger.info(program + "  = " + evaluationResult);
 		assertTrue(Math.abs(evaluationResult.doubleValue() - expected) <= DELTA);
 	}
 }
