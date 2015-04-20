@@ -3,7 +3,7 @@ grammar Arithmetic;
 program : expression ;
 
 expression 
-	: expression '+' expression #Sum 
+	: expression '+' expression #Sum
 	| expression '-' expression #Difference
 	| multiplicativeExp #Term;
 
