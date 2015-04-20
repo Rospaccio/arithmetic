@@ -22,7 +22,7 @@ public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 
 	private static final Logger logger = LoggerFactory.getLogger(NaiveInterpreterVisitor.class);
 	
-	private ParseTreeProperty<Double> numberNodesAnnotations = new ParseTreeProperty<Double>();
+	private ParseTreeProperty<Double> numberNodesAnnotations = new ParseTreeProperty<>();
 	
 	protected ParseTreeProperty<Double> getNumberNodesAnnotations() {
 		return numberNodesAnnotations;
