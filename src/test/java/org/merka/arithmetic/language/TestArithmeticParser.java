@@ -154,6 +154,7 @@ public class TestArithmeticParser {
 		ProgramContext context = parseProgram(program, errorListener);
 		assertFalse(errorListener.isFail());
 		Double result = visitor.visit(context);
+		logger.info(program + " = " + result);
 		return result;
 	}
 	

@@ -90,7 +90,7 @@ public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 	@Override
 	public Double visitNumber(NumberContext ctx) {
 		if(numberNodesAnnotations.get(ctx) != null){
-			logger.info("value found in cache");
+//			logger.info("value found in cache");
 			return numberNodesAnnotations.get(ctx);
 		}
 		Double value = Double.valueOf( ctx.NUMBER(0).getText() );
@@ -98,7 +98,7 @@ public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 			Double decimalPart = Double.valueOf("0." + ctx.NUMBER(1).getText());
 			value += decimalPart;
 		}
-		logger.info("storing value in cache");
+//		logger.info("storing value in cache");
 		numberNodesAnnotations.put(ctx, value);
 		return value;
 	}
