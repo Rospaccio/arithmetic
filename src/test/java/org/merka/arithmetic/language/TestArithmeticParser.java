@@ -1,6 +1,8 @@
 package org.merka.arithmetic.language;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -19,7 +21,6 @@ import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.junit.Test;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
-import org.merka.arithmetic.language.listener.ASTBuilderListener;
 import org.merka.arithmetic.language.visitor.NaiveInterpreterVisitor;
 import org.merka.arithmetic.language.visitor.ParseTreeDumperVisitor;
 import org.slf4j.Logger;
@@ -45,7 +46,12 @@ public class TestArithmeticParser {
 			"((((4))))",
 			"(1) - (2)",
 			"(1 + 1)",
-			"(2) + (3 - 5) * (3-2)"
+			"(2) + (3 - 5) * (3-2)",
+			"3 * 2 / 3 * 4",
+			"3 + 2 - 5 + 2",
+			"((((1 + 30) - 5) - 2) + 4) - 5",
+			"2 * ((((3 + 4) -3)+ 7) - 5)",
+			"1 + 1 + 1 - 1 + 1 + 1 - 1"
 		};
 	
 	public static Double[] results = {
@@ -63,7 +69,12 @@ public class TestArithmeticParser {
 		4D,
 		-1D,
 		2D,
-		0D
+		0D,
+		8.0,
+		2D,
+		23D,
+		12D,
+		3D
 	};
 	
 	public static final String[] invalidStrings = 
@@ -141,9 +152,16 @@ public class TestArithmeticParser {
 			String program = validStrings[index];
 			Double result = interpret(program);
 			Double epsilon = Double.valueOf("0.00001");
+			
+			ParseTreeDumperVisitor dumper = new ParseTreeDumperVisitor();
+			ProgramContext context = parseProgram(program, new ArithmeticTestErrorListener());
+			String tree = context.accept(dumper);
+			
 			assertTrue("Result does not match for the program '" 
 					+ program + "'. Expected " + expected 
-					+ " but got " + result, Math.abs(result - (double)expected) <= epsilon);
+					+ " but got " + result + System.lineSeparator()
+					+ "parse tree: " + System.lineSeparator() 
+					+ tree, Math.abs(result - (double)expected) <= epsilon);
 			index++;
 		}
 	}

@@ -3,17 +3,14 @@ grammar Arithmetic;
 program : expression ;
 
 expression 
-	: expression '+' expression #Sum
-	| expression '-' expression #Difference
-	| multiplicativeExp #Term;
+	: expression ('+' | '-') expression #AlgebraicSum
+	| expression ('*' | '/') expression #Multiplication
+	| term #AtomicTerm;
 
-multiplicativeExp
-	: multiplicativeExp '*' multiplicativeExp #Multiplication
-	| multiplicativeExp '/' multiplicativeExp #Division
-	| NUMBER ('.'NUMBER)? #Number
+term: realNumber #Number
 	| '(' expression ')' #InnerExpression;
 
-// realNumber : NUMBER ('.'NUMBER)?;
+ realNumber : NUMBER ('.'NUMBER)?;
 
 WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
 

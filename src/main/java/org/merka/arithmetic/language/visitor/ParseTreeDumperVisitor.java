@@ -5,15 +5,13 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.merka.arithmetic.language.ArithmeticParser.DifferenceContext;
-import org.merka.arithmetic.language.ArithmeticParser.DivisionContext;
-import org.merka.arithmetic.language.ArithmeticParser.ExpressionContext;
+import org.merka.arithmetic.language.ArithmeticParser.AlgebraicSumContext;
+import org.merka.arithmetic.language.ArithmeticParser.AtomicTermContext;
 import org.merka.arithmetic.language.ArithmeticParser.InnerExpressionContext;
 import org.merka.arithmetic.language.ArithmeticParser.MultiplicationContext;
 import org.merka.arithmetic.language.ArithmeticParser.NumberContext;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
-import org.merka.arithmetic.language.ArithmeticParser.SumContext;
-import org.merka.arithmetic.language.ArithmeticParser.TermContext;
+import org.merka.arithmetic.language.ArithmeticParser.RealNumberContext;
 import org.merka.arithmetic.language.ArithmeticVisitor;
 
 public class ParseTreeDumperVisitor implements ArithmeticVisitor<String> {
@@ -61,16 +59,7 @@ public class ParseTreeDumperVisitor implements ArithmeticVisitor<String> {
 	public String visitProgram(ProgramContext ctx) {
 		return getNodeStringRepresentation("<program>", ctx);
 	}
-
-	@Override
-	public String visitSum(SumContext ctx) {
-		return getNodeStringRepresentation("<sum>", ctx);
-	}
 	
-	@Override
-	public String visitDifference(DifferenceContext ctx) {
-		return getNodeStringRepresentation("<difference>", ctx);
-	}
 
 	@Override
 	public String visitMultiplication(MultiplicationContext ctx) {
@@ -78,23 +67,8 @@ public class ParseTreeDumperVisitor implements ArithmeticVisitor<String> {
 	}
 	
 	@Override
-	public String visitDivision(DivisionContext ctx) {
-		return getNodeStringRepresentation("<division>", ctx);
-	}
-	
-//	@Override
-//	public String visitRealNumber(RealNumberContext ctx) {
-//		return getNodeStringRepresentation("<realNumber>", ctx);
-//	}
-	
-	@Override
 	public String visitNumber(NumberContext ctx) {
 		return getNodeStringRepresentation("<number>", ctx);
-	}
-	
-	@Override
-	public String visitTerm(TermContext ctx) {
-		return getNodeStringRepresentation("<term>", ctx);
 	}
 	
 	@Override
@@ -112,5 +86,20 @@ public class ParseTreeDumperVisitor implements ArithmeticVisitor<String> {
 	
 	private String getNodeStringRepresentation(String nodeName, ParserRuleContext context){
 		return getIndentation() + nodeName + visitChildren(context);
+	}
+
+	public String visitAlgebraicSum(AlgebraicSumContext ctx) {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+	public String visitAtomicTerm(AtomicTermContext ctx) {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+	public String visitRealNumber(RealNumberContext ctx) {
+		// TODO Auto-generated method stub
+		return "";
 	}
 }
