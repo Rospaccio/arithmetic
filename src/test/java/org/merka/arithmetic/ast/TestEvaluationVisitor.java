@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
 import org.merka.arithmetic.language.TestArithmeticParser;
@@ -59,6 +60,7 @@ public class TestEvaluationVisitor {
 	};
 	
 	@Test
+	@Ignore
 	public void testEvaluation() {
 		int index = 0;
 		for(String program : validStrings){
