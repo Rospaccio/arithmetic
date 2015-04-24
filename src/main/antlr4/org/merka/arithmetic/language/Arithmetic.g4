@@ -3,8 +3,8 @@ grammar Arithmetic;
 program : expression ;
 
 expression 
-	: expression ('+' | '-') expression #AlgebraicSum
-	| expression ('*' | '/') expression #Multiplication
+	: expression ('*' | '/') expression #Multiplication
+	| expression ('+' | '-') expression #AlgebraicSum
 	| term #AtomicTerm;
 
 term: realNumber #Number

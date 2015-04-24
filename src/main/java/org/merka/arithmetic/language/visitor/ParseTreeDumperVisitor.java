@@ -79,7 +79,7 @@ public class ParseTreeDumperVisitor implements ArithmeticVisitor<String> {
 
 	@Override
 	public String visitNumber(NumberContext context) {
-		return getIndentation() + "Number" + visitChildren(context);
+		return getIndentation() + "Number: " + context.realNumber().accept(this);
 	}
 
 	@Override
@@ -92,9 +92,9 @@ public class ParseTreeDumperVisitor implements ArithmeticVisitor<String> {
 		String intPart = context.NUMBER(0).getText();
 		if(context.getChildCount() == 3){
 			String decimal = context.NUMBER(1).getText();
-			return getIndentation() + intPart + "." + decimal + System.lineSeparator();
+			return intPart + "." + decimal + System.lineSeparator();
 		}
-		else return getIndentation() + intPart + System.lineSeparator();
+		else return intPart + System.lineSeparator();
 	}
 
 	private String getIndentation() {

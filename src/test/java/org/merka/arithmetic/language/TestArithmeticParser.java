@@ -19,7 +19,6 @@ import org.antlr.v4.runtime.TokenSource;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
 import org.merka.arithmetic.language.visitor.NaiveInterpreterVisitor;
@@ -52,7 +51,11 @@ public class TestArithmeticParser {
 			"3 + 2 - 5 + 2",
 			"((((1 + 30) - 5) - 2) + 4) - 5",
 			"2 * ((((3 + 4) -3)+ 7) - 5)",
-			"1 + 1 + 1 - 1 + 1 + 1 - 1"
+			"1 + 1 + 1 - 1 + 1 + 1 - 1",
+			"2 + 3 * 2 / 7 * 2 / 4 - 2 - 1 + 5",
+			"3 * (1 + 1 + 1 - (3+4-2-2-2)) / 4",
+			"(1 - 4) * (2 - 3) / (3 * (4-7))",
+			"1 + 1 + 1 * 2 * (4+2) * 2 - (1 + 1 - 4 + 1 +1 ) * 2 / 3 / 3 / 3"
 		};
 	
 	public static Double[] results = {
@@ -75,7 +78,11 @@ public class TestArithmeticParser {
 		2D,
 		23D,
 		12D,
-		3D
+		3D,
+		4.4285714285714285714285714285714,
+		1.5,
+		-0.333333333333333333334,
+		26D
 	};
 	
 	public static final String[] invalidStrings = 
@@ -124,7 +131,6 @@ public class TestArithmeticParser {
 	}
 	
 	@Test
-	@Ignore
 	public void testDoubleEvaluation() throws IOException{
 		logger.info("\n\nStarting double evaluation test\n\n");
 		String program = "1 + (30 / (3 * 4.4) + (5.34 * 0.3 - (0.2 + (4 - 5))))";
@@ -140,7 +146,6 @@ public class TestArithmeticParser {
 	}
 
 	@Test
-	@Ignore
 	public void testNaiveInterpreterVisitor() throws IOException{
 		String program = "2 + 3 * 4"; //14
 		Double result = interpret(program);
@@ -149,7 +154,6 @@ public class TestArithmeticParser {
 	}
 	
 	@Test
-	@Ignore
 	public void testNaiveInterpreterVisitorBatch() throws IOException{
 		int index = 0;
 		for(Double expected : results){

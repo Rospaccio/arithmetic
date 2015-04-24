@@ -36,73 +36,89 @@ public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 	public Double visit(ParseTree arg0) {
 		return arg0.accept(this);
 	}
-
+	
 	@Override
-	public Double visitChildren(RuleNode arg0) {
+	public Double visitChildren(RuleNode node) {
 		
 		return null;
 	}
 
 	@Override
-	public Double visitErrorNode(ErrorNode arg0) {
+	public Double visitTerminal(TerminalNode node) {
 		
 		return null;
 	}
 
 	@Override
-	public Double visitTerminal(TerminalNode arg0) {
+	public Double visitErrorNode(ErrorNode node) {
 		
 		return null;
 	}
 
 	@Override
-	public Double visitProgram(ProgramContext ctx) {
-		return ctx.expression().accept(this);
-	}
-
-
-
-
-	@Override
-	public Double visitMultiplication(MultiplicationContext ctx) {
-		Double leftOpernad = ctx.getChild(0).accept(this);
-		Double rightOperand = ctx.getChild(2).accept(this);
-		return leftOpernad * rightOperand;
+	public Double visitProgram(ProgramContext context) {
+		return context.expression().accept(this);
 	}
 
 	@Override
-	public Double visitNumber(NumberContext ctx) {
-		if(numberNodesAnnotations.get(ctx) != null){
-//			logger.info("value found in cache");
-			return numberNodesAnnotations.get(ctx);
+	public Double visitAlgebraicSum(AlgebraicSumContext context) {
+		String operand = context.getChild(1).getText();
+		Double left = context.expression(0).accept(this);
+		Double right = context.expression(1).accept(this);
+		if(operand.equals("+")){
+			return left + right;
 		}
-		Double value = Double.valueOf( ctx.realNumber().NUMBER(0).getText() );
-		if(ctx.getChildCount() == 3){
-			Double decimalPart = Double.valueOf("0." + ctx.realNumber().NUMBER(1).getText());
-			value += decimalPart;
+		else if(operand.equals("-")){
+			return left - right;
 		}
-//		logger.info("storing value in cache");
-		numberNodesAnnotations.put(ctx, value);
-		return value;
+		else
+		{
+			throw new ArithmeticException("Something has really gone wrong");
+		}
 	}
 
 	@Override
-	public Double visitInnerExpression(InnerExpressionContext ctx) {
-		return ctx.expression().accept(this);
+	public Double visitMultiplication(MultiplicationContext context) {
+		String operand = context.getChild(1).getText();
+		Double left = context.expression(0).accept(this);
+		Double right = context.expression(1).accept(this);
+		if(operand.equals("*")){
+			return left * right;
+		}
+		else if(operand.equals("/")){
+			return left / right;
+		}
+		else
+		{
+			throw new ArithmeticException("Something has really gone wrong");
+		}
 	}
 
-	public Double visitAlgebraicSum(AlgebraicSumContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+	@Override
+	public Double visitAtomicTerm(AtomicTermContext context) {
+		return context.term().accept(this);
 	}
 
-	public Double visitAtomicTerm(AtomicTermContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+	@Override
+	public Double visitInnerExpression(InnerExpressionContext context) {
+		return context.expression().accept(this);
 	}
 
-	public Double visitRealNumber(RealNumberContext ctx) {
-		// TODO Auto-generated method stub
-		return null;
+	@Override
+	public Double visitRealNumber(RealNumberContext context) {
+		String intPart = context.NUMBER(0).getText();
+		if(context.getChildCount() == 3){
+			String decimalPart = context.NUMBER(1).getText();
+			return Double.parseDouble(intPart + "." + decimalPart);
+		}
+		else
+		{
+			return Double.parseDouble(intPart);
+		}
+	}
+
+	@Override
+	public Double visitNumber(NumberContext context) {
+		return context.realNumber().accept(this);
 	}
 }
