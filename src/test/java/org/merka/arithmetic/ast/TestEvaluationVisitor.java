@@ -1,10 +1,11 @@
 package org.merka.arithmetic.ast;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.merka.arithmetic.language.ArithmeticParser.ProgramContext;
 import org.merka.arithmetic.language.TestArithmeticParser;
@@ -38,7 +39,16 @@ public class TestEvaluationVisitor {
 			"((((4))))",
 			"(1) - (2)",
 			"(1 + 1)",
-			"(2) + (3 - 5) * (3-2)"
+			"(2) + (3 - 5) * (3-2)",
+			"3 * 2 / 3 * 4",
+			"3 + 2 - 5 + 2",
+			"((((1 + 30) - 5) - 2) + 4) - 5",
+			"2 * ((((3 + 4) -3)+ 7) - 5)",
+			"1 + 1 + 1 - 1 + 1 + 1 - 1",
+			"2 + 3 * 2 / 7 * 2 / 4 - 2 - 1 + 5",
+			"3 * (1 + 1 + 1 - (3+4-2-2-2)) / 4",
+			"(1 - 4) * (2 - 3) / (3 * (4-7))",
+			"1 + 1 + 1 * 2 * (4+2) * 2 - (1 + 1 - 4 + 1 +1 ) * 2 / 3 / 3 / 3"
 		};
 	
 	public static Double[] results = {
@@ -56,11 +66,19 @@ public class TestEvaluationVisitor {
 		4D,
 		-1D,
 		2D,
-		0D
+		0D,
+		8.0,
+		2D,
+		23D,
+		12D,
+		3D,
+		4.4285714285714285714285714285714,
+		1.5,
+		-0.333333333333333333334,
+		26D
 	};
 	
 	@Test
-	@Ignore
 	public void testEvaluation() {
 		int index = 0;
 		for(String program : validStrings){
