@@ -22,69 +22,68 @@ public class ASTBuilderVisitor implements ArithmeticVisitor<ArithmeticASTNode> {
 
 	@Override
 	public ArithmeticASTNode visit(ParseTree tree) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitChildren(RuleNode node) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitTerminal(TerminalNode node) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitErrorNode(ErrorNode node) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitProgram(ProgramContext ctx) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitAlgebraicSum(AlgebraicSumContext ctx) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitMultiplication(MultiplicationContext ctx) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitAtomicTerm(AtomicTermContext ctx) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitNumber(NumberContext ctx) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitInnerExpression(InnerExpressionContext ctx) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ArithmeticASTNode visitRealNumber(RealNumberContext ctx) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
-	
 
 }

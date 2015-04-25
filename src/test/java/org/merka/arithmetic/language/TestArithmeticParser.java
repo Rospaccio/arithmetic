@@ -164,6 +164,7 @@ public class TestArithmeticParser {
 			ParseTreeDumperVisitor dumper = new ParseTreeDumperVisitor();
 			ProgramContext context = parseProgram(program, new ArithmeticTestErrorListener());
 			String tree = context.accept(dumper);
+			logger.debug(tree);
 			
 			assertTrue("Result does not match for the program '" 
 					+ program + "'. Expected " + expected 
