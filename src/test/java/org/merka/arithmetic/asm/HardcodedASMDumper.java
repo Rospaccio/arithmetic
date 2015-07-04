@@ -30,7 +30,7 @@ public class HardcodedASMDumper implements Opcodes
 			mv.visitLabel(l0);
 			mv.visitLineNumber(3, l0);
 			mv.visitVarInsn(ALOAD, 0);
-			mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
+			mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
 			mv.visitInsn(RETURN);
 			Label l1 = new Label();
 			mv.visitLabel(l1);
