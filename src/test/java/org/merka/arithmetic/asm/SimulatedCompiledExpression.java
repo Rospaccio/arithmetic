@@ -1,9 +1,8 @@
 package org.merka.arithmetic.asm;
 
-
 /**
  * A trivial class whose purpose is to being parsed 
- * by ASMifier in order to look and learn how bytecode for
+ * by ASMifier in order to learn how bytecode for
  * an arbitrary class can be generated.
  * @author merka
  *
