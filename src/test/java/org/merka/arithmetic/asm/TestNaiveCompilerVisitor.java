@@ -20,16 +20,43 @@ public class TestNaiveCompilerVisitor
 	@Test
 	public void testOnTheFly() throws Exception
 	{
+		String tempPackage = "org.merka.onthefly";
 		String program = "2 + 3";
+		double result = evaluateClassOnTheFly(program, tempPackage, "CompiledSum");
+		assertEquals("result of current program: '" + program + "'", 5, result, 0.00001);
+		
+		program = "2*3";
+		result = evaluateClassOnTheFly(program, tempPackage, "CompiledMul");
+		assertEquals("result of current program: '" + program + "'", 6, result, 0.00001);
+		
+		program = "2 + 2 * 3";
+		result = evaluateClassOnTheFly(program, tempPackage, "CompiledSumMul");
+		assertEquals(8, result, 0.00001);
+		
+		program = "7 / 2";
+		result = evaluateClassOnTheFly(program, tempPackage, "CompiledDiv");
+		assertEquals(3.5, result, 0.00001);
+		
+		program = "7 - 2";
+		result = evaluateClassOnTheFly(program, tempPackage, "CompiledSub");
+		assertEquals(5, result, 0.00001);
+		
+		program = "1 + 1 + 1 * 2 * (4+2) * 2 - (1 + 1 - 4 + 1 +1 ) * 2 / 3 / 3 / 3";
+		result = evaluateClassOnTheFly(program, tempPackage, "CompiledExp");
+		assertEquals(26D, result, 0.00001);
+	}
+
+	public double evaluateClassOnTheFly(String program, String packageName, String className) throws Exception
+	{
 		TestArithmeticParser.ArithmeticTestErrorListener errorListener = new TestArithmeticParser.ArithmeticTestErrorListener();
 		ProgramContext parseTreeRoot = TestArithmeticParser.parseProgram(program, errorListener);
 
-		NaiveCompilerVisitor visitor = new NaiveCompilerVisitor("org.merka.onthefly",
-				"CompiledExpression");
+		NaiveCompilerVisitor visitor = new NaiveCompilerVisitor(packageName,
+				className);
 
 		visitor.visit(parseTreeRoot);
 		byte[] rawClass = visitor.getRawClass();
-		String name = "org.merka.onthefly.CompiledExpression";
+		String name = packageName + "." + className;
 		ByteArrayClassLoader classLoader = new ByteArrayClassLoader(rawClass, name);
 		Class<?> compiledClass = classLoader.loadClass(name);
 
@@ -40,13 +67,13 @@ public class TestNaiveCompilerVisitor
 		Method computeMethod = compiledClass.getMethod("compute", parameterTypes);
 		Object[] args = new Object[0];
 		double result = (double) computeMethod.invoke(instance, args);
-		assertEquals("result", 5, result, 0.00001);
+		return result;
 	}
-
+	
 	@Test
 	public void testWriteClass() throws Exception
 	{
-		String program = "4 + 1";
+		String program = "1 + 1 + 1 * 2 * (4+2) * 2 - (1 + 1 - 4 + 1 +1 ) * 2 / 3 / 3 / 3"; // "4 + 1";
 		TestArithmeticParser.ArithmeticTestErrorListener errorListener = new TestArithmeticParser.ArithmeticTestErrorListener();
 		ProgramContext parseTreeRoot = TestArithmeticParser.parseProgram(program, errorListener);
 

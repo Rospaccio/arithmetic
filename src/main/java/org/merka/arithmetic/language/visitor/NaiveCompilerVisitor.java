@@ -95,7 +95,6 @@ public class NaiveCompilerVisitor extends ArithmeticBaseVisitor<String> implemen
 		// creates a top level method named "compute"
 		// that internally calls the previous generated innerMethodName
 		{
-			
 				mv = classWriter.visitMethod(ACC_PUBLIC, "compute", "()D", null, null);
 				mv.visitCode();
 				Label l0 = new Label();
@@ -109,7 +108,6 @@ public class NaiveCompilerVisitor extends ArithmeticBaseVisitor<String> implemen
 				mv.visitLocalVariable("this", getStackQualifiedName(), null, l0, l1, 0);
 				mv.visitMaxs(2, 1);
 				mv.visitEnd();
-				
 		}
 		
 		// build the epilog of the class
@@ -120,6 +118,19 @@ public class NaiveCompilerVisitor extends ArithmeticBaseVisitor<String> implemen
 	@Override
 	public String visitAlgebraicSum(AlgebraicSumContext ctx)
 	{
+		int byteCodeOp = -1;
+		String operand = ctx.getChild(1).getText();
+		if(operand.equals("+")){
+			byteCodeOp = DADD;
+		}
+		else if(operand.equals("-")){
+			byteCodeOp = DSUB;
+		}
+		else
+		{
+			throw new ArithmeticException("Something has really gone wrong");
+		}
+		
 		String leftArgumentMethod = ctx.expression(0).accept(this);
 		String rightArgumentMethod = ctx.expression(1).accept(this);
 		
@@ -138,7 +149,7 @@ public class NaiveCompilerVisitor extends ArithmeticBaseVisitor<String> implemen
 			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, getQualifiedName(), leftArgumentMethod, "()D", false);
 			methodVisitor.visitVarInsn(ALOAD, 0);
 			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, getQualifiedName(), rightArgumentMethod, "()D", false);
-			methodVisitor.visitInsn(DADD);
+			methodVisitor.visitInsn(byteCodeOp);
 			methodVisitor.visitInsn(DRETURN);
 			Label l1 = new Label();
 			methodVisitor.visitLabel(l1);
@@ -153,14 +164,53 @@ public class NaiveCompilerVisitor extends ArithmeticBaseVisitor<String> implemen
 	@Override
 	public String visitMultiplication(MultiplicationContext ctx)
 	{
-		return super.visitMultiplication(ctx);
+		int bytecodeOp = -1;
+		String operand = ctx.getChild(1).getText();
+		if(operand.equals("*")){
+			bytecodeOp = DMUL;
+		}
+		else if(operand.equals("/")){
+			bytecodeOp = DDIV;
+		}
+		else
+		{
+			throw new ArithmeticException("Something has really gone wrong");
+		}
+		
+		String leftArgumentMethod = ctx.expression(0).accept(this);
+		String rightArgumentMethod = ctx.expression(1).accept(this);
+		
+		// builds a method whose body is
+		// 'return <leftArgumentMethod>() + rightArgumentMethod()'
+		
+		String currentMethodName = getNextMethodName();
+		MethodVisitor methodVisitor;
+		{
+			methodVisitor = classWriter.visitMethod(ACC_PUBLIC, currentMethodName, "()D", null, null);
+			methodVisitor.visitCode();
+			Label l0 = new Label();
+			methodVisitor.visitLabel(l0);
+
+			methodVisitor.visitVarInsn(ALOAD, 0);
+			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, getQualifiedName(), leftArgumentMethod, "()D", false);
+			methodVisitor.visitVarInsn(ALOAD, 0);
+			methodVisitor.visitMethodInsn(INVOKEVIRTUAL, getQualifiedName(), rightArgumentMethod, "()D", false);
+			methodVisitor.visitInsn(bytecodeOp);
+			methodVisitor.visitInsn(DRETURN);
+			Label l1 = new Label();
+			methodVisitor.visitLabel(l1);
+			methodVisitor.visitLocalVariable("this", getStackQualifiedName(), null, l0, l1, 0);
+			methodVisitor.visitMaxs(4, 1);
+			methodVisitor.visitEnd();
+		}
+		
+		return currentMethodName;
 	}
 
 	@Override
 	public String visitAtomicTerm(AtomicTermContext ctx)
 	{
-		
-		return super.visitAtomicTerm(ctx);
+		return ctx.term().accept(this);
 	}
 
 	@Override
@@ -173,8 +223,7 @@ public class NaiveCompilerVisitor extends ArithmeticBaseVisitor<String> implemen
 	@Override
 	public String visitInnerExpression(InnerExpressionContext ctx)
 	{
-		
-		return super.visitInnerExpression(ctx);
+		return ctx.expression().accept(this);
 	}
 
 	@Override

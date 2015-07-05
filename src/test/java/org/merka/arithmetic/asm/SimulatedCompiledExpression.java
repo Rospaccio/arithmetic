@@ -15,7 +15,7 @@ public class SimulatedCompiledExpression
 	}
 	
 	public double compute_0(){
-		return compute_01() + compute_02();
+		return compute_01() * compute_02();
 	}
 	
 	public double compute_01(){

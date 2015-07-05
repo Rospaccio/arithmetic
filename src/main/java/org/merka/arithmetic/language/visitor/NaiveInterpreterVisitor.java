@@ -38,8 +38,8 @@ public class NaiveInterpreterVisitor implements ArithmeticVisitor<Double> {
 	}
 	
 	@Override
-	public Double visitChildren(RuleNode node) {
-		
+	public Double visitChildren(RuleNode node) 
+	{
 		return null;
 	}
 
